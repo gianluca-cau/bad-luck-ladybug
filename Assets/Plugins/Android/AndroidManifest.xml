@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="preferExternal" package="com.outofthebox.badluckladybug" android:versionName="1.1" android:versionCode="2">
+	<supports-screens android:smallScreens="true" android:normalScreens="true" android:largeScreens="true" android:xlargeScreens="true" android:anyDensity="true" />
+	<application android:icon="@drawable/app_icon" android:label="@string/app_name" android:debuggable="false">
+		<activity android:name="com.playhaven.unity3d.PlayHavenUnityActivity" android:label="@string/app_name" android:launchMode="singleTask" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:screenOrientation="sensor">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+			<!-- Example deep link
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW"/>
+				<category android:name="android.intent.category.DEFAULT"/>
+				<category android:name="android.intent.category.BROWSABLE"/>
+				<data android:scheme="company" android:host="===your app's package name here===" />
+			</intent-filter>
+			-->
+		</activity>
+		<activity android:name="com.unity3d.player.VideoPlayer" android:label="@string/app_name" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:screenOrientation="sensor">
+		</activity>
+		
+		<activity android:name="com.playhaven.android.view.FullScreen" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:windowSoftInputMode="adjustResize" android:configChanges="orientation|keyboardHidden|screenSize">
+			<!-- Support FullScreen.createIntent -->
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+			<!-- Support Uri.parse -->
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:scheme="playhaven" android:host="localhost" android:pathPattern="/full" />
+			</intent-filter>
+		</activity>
+        	<receiver android:name="com.playhaven.android.push.PushReceiver">
+            		<intent-filter>
+                		<action android:name="android.intent.action.VIEW" />
+                		<category android:name="com.playhaven.android" />
+            		</intent-filter>
+        	</receiver>
+		
+		<!-- This is needed to receive Google Cloud Messaging intents from the system. -->
+		<receiver android:name="com.playhaven.android.push.GCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+				<category android:name="com.outofthebox.badluckladybug" />
+			</intent-filter>
+		</receiver>
+		
+	</application>
+	
+	<uses-feature android:glEsVersion="0x00010001" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	
+	<!-- This is needed to receive Google Cloud Messaging intents from the system. -->
+	<permission android:name="com.outofthebox.badluckladybug.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="com.outofthebox.badluckladybug.permission.C2D_MESSAGE" />
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	
+	<uses-sdk android:minSdkVersion="10" android:targetSdkVersion="17" />
+</manifest>
