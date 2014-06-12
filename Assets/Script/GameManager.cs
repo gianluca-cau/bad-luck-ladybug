@@ -3,32 +3,58 @@ using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
+	//just some constants 
 	public const string HIGH_SCORE = "high score";
 	public const string LONGEST_STREAK = "longest streak";
 	public const string TOTAL_INSECTS_KILLED = "total insects killed";
 	public const string TOTAL_FLOWERS_TAKEN = "total flowers taken";
 
+	//singleton instance
+	private static GameManager _instance;
+
+	//all the game states
 	public enum GameState{STARTING,LEVEL_SWITCHING,PLAYING,GAME_OVER,PAUSED};
+
+	//amount of flowers needed to end a level
 	public int []flowersPerLevel;
+
+	//time between the start of each level
 	public float levelSwitchTime;
 
+	//the duration of the streak message on the screen
 	public float durationStreakMsg;
 
-	private static GameManager _instance;
-	private int hearts = 3;
+	//number of lives
+	private int lives = 3;
+
+	//at start the flower taken are 0
 	private static int flowersTaken = 0;
+
+	//level number
 	private static int level = 1;
+
+	//how many flowers we took without letting the ladybug take any
 	private static int streak = 0;
 
+	//the actual game state
 	private static GameState gameState = GameState.STARTING;
-	private float levelSwitchTimer;
+
+
 	private bool heartTaken = false;
 	private bool ladybugMsgCalled = true;
 	private bool restarted = false;
+
+	//timers
 	private float timerStreak;
+	private float levelSwitchTimer;
+
 	private static bool statsSaved = false;
+
+	//stats about our match
 	private static int longestStreakOfTheMatch;
 	private static int insectsKilledInThisMatch;
+
+	//references
 	private GameObject _ladybug;
 	private GameObject _instantiator;
 	private GameObject _guiManager;
@@ -40,9 +66,10 @@ public class GameManager : MonoBehaviour {
 
 	void Start()
 	{
-		Restart();
+		Reset();
 	}
 
+	//singleton
 	public static GameManager instance
 	{
 		get
@@ -82,20 +109,24 @@ public class GameManager : MonoBehaviour {
 			return _instantiator;
 		}
 	}
-
-	public void HeartLost()
+	//we just lost a life
+	public void LifeLost()
 	{
-		hearts--;
+		lives--;
+		//if our streak is the longest of the match store this value
 		if(streak > longestStreakOfTheMatch)
 			longestStreakOfTheMatch = streak;
+
+		//reset the actual streak
 		streak = 0;
 	}
 
-	public void HeartsGained(int numberOfHearts)
+	public void LivesGained(int numberOfHearts)
 	{
-		hearts += numberOfHearts;
+		lives += numberOfHearts;
 	}
-	
+
+	//we took a flower!
 	public void FlowerTaken()
 	{
 		flowersTaken++;
@@ -109,7 +140,7 @@ public class GameManager : MonoBehaviour {
 
 	public  int GetHeartsRemaining()
 	{
-		return hearts;
+		return lives;
 	}
 
 	public void NextLevel()
@@ -132,8 +163,10 @@ public class GameManager : MonoBehaviour {
 		insectsKilledInThisMatch++;
 	}
 
-	public void Restart()
+	//reset
+	public void Reset()
 	{
+		//destroy all the game entities in the scene
 		foreach(GameObject obj in GameObject.FindGameObjectsWithTag("Flowers"))
 		{
 			Destroy(obj);
@@ -144,11 +177,20 @@ public class GameManager : MonoBehaviour {
 			Destroy (obj);
 		}
 
+		//put the ladybug at the start pos
 		ladybug.transform.position = GameObject.FindGameObjectWithTag("Ladybug").GetComponent<Ladybug>().startPosition;
+
+		//spawn the dupli flower
 		instantiator.GetComponent<Instantiator>().SpawnAFlower("dupli");
+
+		//reset the level number
 		level = 1;
+
+		//the match is starting!
 		gameState = GameState.STARTING;
-		hearts = 3;
+
+		//reset counters and stuff
+		lives = 3;
 		longestStreakOfTheMatch = 0;
 		insectsKilledInThisMatch = 0;
 		flowersTaken = 0;
@@ -173,43 +215,34 @@ public class GameManager : MonoBehaviour {
 	}
 
 	void Update()
-	{/*
-		if(Input.GetKey(KeyCode.A))
-		{
-			GameObject[] objs =  GameObject.FindWithTag("Flowers");
-			for(int i = 0;i < objs.Length;i++)
-			{
-				if(objs[i].GetComponent<Flower>().IsTargeted)
-					objs[i].GetComponent<Flower>().SendMessage("
-			}
-		}*/
+	{
 		if(!heartTaken)
 		{
 			if(streak == 25)
 			{
 				guiManager.GetComponent<GUIManager>().streakMsg = "Streak of 25!+1 Life";
 				guiManager.GetComponent<GUIManager>().ShowStreak();
-				HeartsGained(1);
+				LivesGained(1);
 				heartTaken = true;
 			}
 			if(streak == 50)
 			{
 				guiManager.GetComponent<GUIManager>().streakMsg = "Streak of 50!\n\nGreat!+3 Lives";
-				HeartsGained(3);
+				LivesGained(3);
 				guiManager.GetComponent<GUIManager>().ShowStreak();
 				heartTaken = true;
 			}
 			if(streak == 100)
 			{
 				guiManager.GetComponent<GUIManager>().streakMsg = "Streak of 100!\n\nFantastic!+6 Lives";
-				HeartsGained(6);
+				LivesGained(6);
 				guiManager.GetComponent<GUIManager>().ShowStreak();
 				heartTaken = true;
 			}
 			if(streak == 200)
 			{
 				guiManager.GetComponent<GUIManager>().streakMsg = "Streak of 200!\n\nUnbelievable!!+15 Lives";
-				HeartsGained(15);
+				LivesGained(15);
 				guiManager.GetComponent<GUIManager>().ShowStreak();
 				heartTaken = true;
 			}
@@ -233,7 +266,7 @@ public class GameManager : MonoBehaviour {
 				gameState = GameState.PAUSED;
 			}
 
-			if(hearts <= 0)
+			if(lives <= 0)
 			{
 				gameState = GameState.GAME_OVER;
 				MusicPlayer.instance.PlayGameOverSound();
@@ -359,9 +392,10 @@ public class GameManager : MonoBehaviour {
 			if(Input.GetKeyDown(KeyCode.Escape))
 			{
 				Application.LoadLevel("main_menu");
-				Restart();
+				Reset();
 			}
 			break;
+
 		case GameState.LEVEL_SWITCHING:
 
 			ladybugMsgCalled = false;

@@ -188,7 +188,7 @@ public class Ladybug : MonoBehaviour {
 
 				if(t == Flower.mType.NORMAL || t == Flower.mType.DUPLI)
 				{
-					GameManager.instance.HeartLost();
+					GameManager.instance.LifeLost();
 					heart.transform.position = transform.position + new Vector3(0,exclamationMarkOffset,0);
 					heart.GetComponent<SpriteRenderer>().color = new Color(1,1,1,1);
 					StartCoroutine(Effects.MoveAndFade(heart,Vector2.up,0.01f,0.02f));

@@ -18,7 +18,7 @@ public class HeartInsect : Insect {
 	{
 		if(GameManager.instance.GetGameState() == GameManager.GameState.PLAYING)
 		{
-			GameManager.instance.HeartsGained(1);
+			GameManager.instance.LivesGained(1);
 			MusicPlayer.instance.PlayExtraLifeSound();
 			base.Explode();
 		}

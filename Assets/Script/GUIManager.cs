@@ -41,8 +41,7 @@ public class GUIManager : MonoBehaviour {
 	private Rect levelSwitchRect;
 	private float streakTimer;
 	private float warningMsgTimer;
-	private int matchsPlayed,
-	matchsToTriggerAD = 2;
+
 	void Start()
 	{
 		levelSwitchRect = new Rect(0,nativeHeight * 0.5f - levelSwitchStyle.fontSize * 0.5f,nativeWidth,60);
@@ -67,7 +66,7 @@ public class GUIManager : MonoBehaviour {
 			{
 				GameManager.instance.StartGame();
 			}
-			//Effects.DrawOutline(new Rect(0,nativeHeight * 0.3f + 60,nativeWidth,30),"Tap to start",startMessageStyle2,Color.black,startMessageStyle2.normal.textColor,5);
+
 			break;
 
 		case GameManager.GameState.PLAYING:
@@ -105,13 +104,7 @@ public class GUIManager : MonoBehaviour {
 
 			if(GUILayout.Button("Play again"))
 			{
-				matchsPlayed++;
-				if(matchsPlayed >= matchsToTriggerAD)
-				{
-					PlayHavenManager.Instance.ContentRequest("game_over");
-					matchsPlayed = 0;
-				}
-				GameManager.instance.Restart();
+				GameManager.instance.Reset();
 			}
 
 			if(GUILayout.Button("Menu"))
@@ -123,7 +116,6 @@ public class GUIManager : MonoBehaviour {
 		case GameManager.GameState.PAUSED:
 			Effects.DrawOutline(new Rect(0,0,800,180),"Paused!",startMessageStyle,Color.black,pauseColor,4);
 			Effects.DrawOutline(new Rect(0,0,800,300),"Press resume to restart",startMessageStyle2,Color.black,Color.cyan,4);
-			//GUI.Label(new Rect(0,0,800,480),"Paused\nPress resume to restart",startMessageStyle2);
 
 			if(GUI.Button(new Rect(300,220,200,100),"Resume"))
 			{
@@ -141,7 +133,7 @@ public class GUIManager : MonoBehaviour {
 		GUI.DrawTexture(new Rect(0,0,50,50),flowerTexture);
 		Effects.DrawOutline(new Rect(60,0,1000,40),GameManager.instance.GetFlowersTaken().ToString(),mySkin.label,Color.black,Color.white,3);
 		Effects.DrawOutline(new Rect(150,0,1000,40),"Level " + GameManager.instance.GetLevel(),mySkin.label,Color.black,Color.magenta,3);
-				GUI.BeginGroup(new Rect(300,5,500,40));
+		GUI.BeginGroup(new Rect(300,5,500,40));
 		Effects.DrawOutline(new Rect(0,0,100,40),"Lives ",mySkin.label,Color.black,Color.white,3);
 
 

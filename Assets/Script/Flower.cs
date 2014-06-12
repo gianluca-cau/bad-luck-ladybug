@@ -99,26 +99,35 @@ public class Flower : MonoBehaviour {
 			if(IsActive)
 			{
 				MusicPlayer.instance.PlayPickedFlowerSound();
+
+				//if the flower is dupli type tell the intantiator to spawn another one
 				if(myType == mType.DUPLI)
 					instantiator.SendMessage("SpawnAFlower","dupli");
 
+				//if the flower is toxic...
 				if(myType == mType.TOXIC)
 				{
+					//show the warning message
 					guiController.GetComponent<GUIManager>().warningMsg = "Lives -1";
 					guiController.GetComponent<GUIManager>().showWarningMsg();
-					GameManager.instance.HeartLost();
+
+					//one life is gone!
+					GameManager.instance.LifeLost();
 					MusicPlayer.instance.PlayPoisonedFlowerSound();
 				}
+				//if this flower is targeted by the ladybug...
 				if(IsTargeted)
 				{
+					//...tell her to look for another one cuz this is already gone!
 					ladyBug.SendMessage("LookForAnotherFlower");
 				}
-
+				//let this flower explode!
 				Explode();
 			}
 		}
 	}
 
+	//return the type of this flower
 	public mType GetType()
 	{
 		return myType;
@@ -126,12 +135,20 @@ public class Flower : MonoBehaviour {
 
 	public void Explode()
 	{
-		//audio.Play();
+		//we notice the game manager that we took a flower
 		GameManager.instance.FlowerTaken();
+
+		//explosion of "fancy" particles when we get the flower
 		GameObject expl = (GameObject)Instantiate(explosionParticles,transform.position,Quaternion.identity);
+
+		//destroy the particle game obj after 1 sec
 		GameObject.Destroy(expl,1);
+
+		//if this is the first flower also destroy the comic
 		if(mId == 1)
 			Destroy(comicInstance);
+
+		//destroy this game obj
 		GameObject.Destroy(this.gameObject);
 	}
 	

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using GoogleMobileAds.Api;
 
 public class MenuGUI : MonoBehaviour {
 
@@ -29,9 +30,18 @@ public class MenuGUI : MonoBehaviour {
 	private string clicked = "";
 	private Texture2D audioBtnTex;
 
+	private BannerView bannerView;
+
 	void Start()
 	{
 		audioBtnTex = audioBtnOnTex;
+		// Create a 320x50 banner at the top of the screen.
+		bannerView = new BannerView(
+			"", AdSize.Banner, AdPosition.Bottom);
+		// Create an empty ad request.
+		AdRequest request = new AdRequest.Builder().Build();
+		// Load the banner with the request.
+		bannerView.LoadAd(request);
 	}
 
 	void OnGUI()
@@ -105,6 +115,7 @@ public class MenuGUI : MonoBehaviour {
 
 		if(GUI.Button(playButtonRect,"Play",playButtonStyle))
 		{
+			bannerView.Destroy();
 			Application.LoadLevel("main_scene");
 		}
 	}
